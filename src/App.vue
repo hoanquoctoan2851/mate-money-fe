@@ -1,6 +1,7 @@
-<script setup>
-import { RouterLink, RouterView } from 'vue-router'
-</script>
 <template>
-  <RouterView />
+  <Login />
 </template>
+
+<script setup>
+import Login from './Login.vue'
+</script>
