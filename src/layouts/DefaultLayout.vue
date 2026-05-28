@@ -35,6 +35,29 @@
             </el-dropdown-menu>
           </template>
         </el-dropdown>
+
+        <!-- User Menu -->
+        <el-dropdown trigger="click" @command="handleUserCommand">
+          <div class="user-avatar">
+            <el-avatar :size="32" class="avatar-icon">
+              {{ authStore.user?.fullName?.charAt(0)?.toUpperCase() || 'U' }}
+            </el-avatar>
+          </div>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item disabled>
+                <div class="user-info-dropdown">
+                  <strong>{{ authStore.user?.fullName }}</strong>
+                  <span>{{ authStore.user?.email }}</span>
+                </div>
+              </el-dropdown-item>
+              <el-dropdown-item divided command="logout">
+                <el-icon><SwitchButton /></el-icon>
+                {{ $t('common.logout') }}
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
       </div>
     </el-header>
 
@@ -72,9 +95,10 @@
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { Coin, HomeFilled, InfoFilled } from '@element-plus/icons-vue'
+import { Coin, HomeFilled, InfoFilled, SwitchButton } from '@element-plus/icons-vue'
 import ThemeToggle from '../components/ThemeToggle.vue'
 import { useLocaleStore } from '../stores/locale'
+import { useAuthStore } from '../stores/auth'
 
 // Globe icon (Element Plus doesn't have one, we create inline)
 const Globe = {
@@ -84,6 +108,7 @@ const Globe = {
 const route = useRoute()
 const { locale } = useI18n()
 const localeStore = useLocaleStore()
+const authStore = useAuthStore()
 
 const activeMenu = computed(() => route.path)
 
@@ -94,6 +119,12 @@ const currentLocaleLabel = computed(() => {
 function handleLocaleChange(lang: string) {
   localeStore.setLocale(lang)
   locale.value = lang
+}
+
+function handleUserCommand(command: string) {
+  if (command === 'logout') {
+    authStore.logout()
+  }
 }
 </script>
 
@@ -159,6 +190,40 @@ html.dark .title-money {
 
 .locale-btn {
   color: var(--mm-text-secondary) !important;
+}
+
+.user-avatar {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.avatar-icon {
+  background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+  color: #fff;
+  font-weight: 700;
+  font-size: 14px;
+  transition: box-shadow 0.3s;
+}
+
+.avatar-icon:hover {
+  box-shadow: var(--mm-glow);
+}
+
+.user-info-dropdown {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.5;
+}
+
+.user-info-dropdown strong {
+  color: var(--mm-text-color);
+  font-size: 14px;
+}
+
+.user-info-dropdown span {
+  color: var(--mm-text-muted);
+  font-size: 12px;
 }
 
 .layout-aside {
